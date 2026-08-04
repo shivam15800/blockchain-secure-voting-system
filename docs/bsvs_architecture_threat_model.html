@@ -1,0 +1,325 @@
+
+<h2 class="sr-only">BSVS system architecture and threat model</h2>
+<style>
+.tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:0.5px solid var(--border);padding-bottom:12px}
+.tb{padding:6px 18px;border-radius:var(--radius);border:0.5px solid transparent;background:transparent;color:var(--text-secondary);cursor:pointer;font-size:13px;font-family:var(--font-sans)}
+.tb.on{background:var(--surface-1);color:var(--text-primary);border-color:var(--border-strong)}
+.pnl{display:none}
+.pnl.on{display:block}
+.tt{width:100%;border-collapse:collapse;font-size:12px}
+.tt th{text-align:left;padding:8px 10px;background:var(--surface-0);color:var(--text-secondary);font-weight:500;border-bottom:0.5px solid var(--border-strong);white-space:nowrap}
+.tt td{padding:8px 10px;border-bottom:0.5px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text-primary)}
+.tt tr:last-child td{border-bottom:none}
+.tt tr:hover td{background:var(--surface-0)}
+.sc{display:inline-block;padding:1px 7px;border-radius:3px;font-size:11px;font-weight:500;white-space:nowrap}
+.bS{background:var(--bg-danger);color:var(--text-danger)}
+.bT{background:var(--bg-warning);color:var(--text-warning)}
+.bR{background:var(--bg-accent);color:var(--text-accent)}
+.bI{background:var(--bg-pro);color:var(--text-pro)}
+.bD{background:var(--bg-success);color:var(--text-success)}
+.bE{background:var(--bg-danger);color:var(--text-danger)}
+.sv-c{color:var(--text-danger);font-weight:500}
+.sv-h{color:var(--text-warning);font-weight:500}
+.sv-m{color:var(--text-accent)}
+.sv-l{color:var(--text-secondary)}
+.comp{white-space:nowrap;color:var(--text-secondary);font-size:11px}
+code{font-family:var(--font-mono);font-size:11px;background:var(--surface-1);padding:1px 4px;border-radius:3px}
+</style>
+
+<div class="tabs">
+  <button class="tb on" onclick="sw(0)">Architecture</button>
+  <button class="tb" onclick="sw(1)">Threat model</button>
+</div>
+
+<div id="p0" class="pnl on">
+<svg width="100%" viewBox="0 0 680 562" role="img">
+<title>BSVS system architecture — four-zone layered diagram</title>
+<desc>Client zone contains voter and admin browser actors. Application zone contains React frontend, auth module (Swati), and smart contracts (Anu). Blockchain zone contains Ethereum network running Ganache or Sepolia. Infrastructure zone contains GitHub Actions CI and Hardhat, owned by Sira.</desc>
+<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- Zone boundary dashed rects -->
+<rect x="20" y="12" width="640" height="116" rx="8" fill="none" stroke="var(--border-strong)" stroke-dasharray="4 4" stroke-width="0.5"/>
+<rect x="20" y="142" width="640" height="178" rx="8" fill="none" stroke="var(--border-strong)" stroke-dasharray="4 4" stroke-width="0.5"/>
+<rect x="20" y="332" width="640" height="96" rx="8" fill="none" stroke="var(--border-strong)" stroke-dasharray="4 4" stroke-width="0.5"/>
+<rect x="20" y="438" width="640" height="90" rx="8" fill="none" stroke="var(--border-strong)" stroke-dasharray="4 4" stroke-width="0.5"/>
+
+<!-- Zone labels -->
+<text class="ts" x="28" y="10" fill="var(--text-muted)">client zone</text>
+<text class="ts" x="28" y="140" fill="var(--text-muted)">application zone</text>
+<text class="ts" x="28" y="330" fill="var(--text-muted)">blockchain zone</text>
+<text class="ts" x="28" y="436" fill="var(--text-muted)">infrastructure zone</text>
+
+<!-- CLIENT ZONE -->
+<g class="node c-gray" onclick="sendPrompt('Describe the voter actor in BSVS: wallet setup, UI interactions, and data that flows through the system when they vote')">
+  <rect x="40" y="28" width="200" height="60" rx="8" stroke-width="0.5"/>
+  <text class="th" x="140" y="51" text-anchor="middle" dominant-baseline="central">Voter</text>
+  <text class="ts" x="140" y="71" text-anchor="middle" dominant-baseline="central">Browser · MetaMask wallet</text>
+</g>
+
+<g class="node c-gray" onclick="sendPrompt('Describe the admin actor in BSVS: privileges, admin key risks, and what operations they control on the smart contract')">
+  <rect x="440" y="28" width="200" height="60" rx="8" stroke-width="0.5"/>
+  <text class="th" x="540" y="51" text-anchor="middle" dominant-baseline="central">Admin</text>
+  <text class="ts" x="540" y="71" text-anchor="middle" dominant-baseline="central">Browser · MetaMask wallet</text>
+</g>
+
+<!-- Trust boundary crossing label -->
+<text class="ts" x="340" y="128" text-anchor="middle" fill="var(--text-muted)">— trust boundary crossing —</text>
+
+<!-- ARROWS: Clients → Frontend -->
+<path d="M140,88 L140,155" fill="none" stroke="var(--border-stronger)" stroke-width="0.5" marker-end="url(#arr)"/>
+<path d="M540,88 L540,155" fill="none" stroke="var(--border-stronger)" stroke-width="0.5" marker-end="url(#arr)"/>
+
+<!-- APP ZONE -->
+<g class="node c-blue" onclick="sendPrompt('Detail the React frontend layer for BSVS: what Garv builds, how MetaMask signs transactions, how the voter UI, admin dashboard, and results viewer work together')">
+  <rect x="40" y="155" width="600" height="50" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="174" text-anchor="middle" dominant-baseline="central">React frontend</text>
+  <text class="ts" x="340" y="192" text-anchor="middle" dominant-baseline="central">Ethers.js · MetaMask connector · Voter UI · Admin dashboard · Results viewer</text>
+</g>
+
+<!-- ARROWS: Frontend → Services -->
+<path d="M180,205 L180,222" fill="none" stroke="var(--border-stronger)" stroke-width="0.5" marker-end="url(#arr)"/>
+<path d="M500,205 L500,222" fill="none" stroke="var(--border-stronger)" stroke-width="0.5" marker-end="url(#arr)"/>
+
+<!-- Auth Module (Swati) -->
+<g class="node c-teal" onclick="sendPrompt('Detail the auth module for BSVS: what Swati builds for identity verification, credential issuance, and how a verified credential connects to the registerVoter smart contract call')">
+  <rect x="40" y="222" width="270" height="80" rx="8" stroke-width="0.5"/>
+  <text class="th" x="175" y="244" text-anchor="middle" dominant-baseline="central">Auth module</text>
+  <text class="ts" x="175" y="261" text-anchor="middle" dominant-baseline="central">Identity verifier</text>
+  <text class="ts" x="175" y="277" text-anchor="middle" dominant-baseline="central">Credential issuer</text>
+  <text class="ts" x="175" y="293" text-anchor="middle" dominant-baseline="central">Session handler</text>
+</g>
+
+<!-- Smart Contracts (Anu) -->
+<g class="node c-purple" onclick="sendPrompt('Detail the smart contract layer for BSVS: the frozen IVoting.sol interface, VoterRegistry, Ballot.sol, Results.sol, and which events each contract emits')">
+  <rect x="370" y="222" width="270" height="80" rx="8" stroke-width="0.5"/>
+  <text class="th" x="505" y="244" text-anchor="middle" dominant-baseline="central">Smart contracts</text>
+  <text class="ts" x="505" y="261" text-anchor="middle" dominant-baseline="central">IVoting.sol (frozen interface)</text>
+  <text class="ts" x="505" y="277" text-anchor="middle" dominant-baseline="central">VoterRegistry · Ballot.sol</text>
+  <text class="ts" x="505" y="293" text-anchor="middle" dominant-baseline="central">Results.sol · Event log</text>
+</g>
+
+<!-- ARROW: Auth → Contracts (registerVoter flow) -->
+<path d="M310,262 L370,262" fill="none" stroke="var(--border-stronger)" stroke-width="0.5" marker-end="url(#arr)"/>
+<text class="ts" x="340" y="256" text-anchor="middle" fill="var(--text-muted)">registerVoter()</text>
+
+<!-- ARROWS: Services → Chain -->
+<path d="M175,302 L175,346" fill="none" stroke="var(--border-stronger)" stroke-width="0.5" marker-end="url(#arr)"/>
+<path d="M505,302 L505,346" fill="none" stroke="var(--border-stronger)" stroke-width="0.5" marker-end="url(#arr)"/>
+
+<!-- CHAIN ZONE -->
+<g class="node c-gray" onclick="sendPrompt('Compare Ganache vs Sepolia for BSVS: differences in block time, gas mechanics, account seeding, deterministic addresses, and when to use each in the development workflow')">
+  <rect x="40" y="346" width="600" height="66" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="366" text-anchor="middle" dominant-baseline="central">Ethereum network</text>
+  <text class="ts" x="340" y="383" text-anchor="middle" dominant-baseline="central">Ganache (local dev) · Sepolia testnet (deployment)</text>
+  <text class="ts" x="340" y="399" text-anchor="middle" dominant-baseline="central">Immutable ledger · Event log · Contract state</text>
+</g>
+
+<!-- ARROWS: Infra → Chain (deploy, dashed, upward) -->
+<path d="M250,451 L250,412" fill="none" stroke="var(--border-strong)" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+<path d="M500,451 L500,412" fill="none" stroke="var(--border-strong)" stroke-width="0.5" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+<text class="ts" x="340" y="434" text-anchor="middle" fill="var(--text-muted)">deploy</text>
+
+<!-- INFRA ZONE -->
+<g class="node c-amber" onclick="sendPrompt('Detail the GitHub Actions CI setup for BSVS: what Sira configures for lint, test, and deploy jobs, branch protection rules, and secret management for the deployer private key')">
+  <rect x="40" y="451" width="270" height="60" rx="8" stroke-width="0.5"/>
+  <text class="th" x="175" y="473" text-anchor="middle" dominant-baseline="central">GitHub Actions CI</text>
+  <text class="ts" x="175" y="491" text-anchor="middle" dominant-baseline="central">Lint · Test · Deploy pipeline</text>
+</g>
+
+<g class="node c-amber" onclick="sendPrompt('Detail the Hardhat configuration for BSVS: hardhat.config.js for Ganache and Sepolia, compile scripts, test scripts, and deploy scripts with constructor args')">
+  <rect x="370" y="451" width="270" height="60" rx="8" stroke-width="0.5"/>
+  <text class="th" x="505" y="473" text-anchor="middle" dominant-baseline="central">Hardhat</text>
+  <text class="ts" x="505" y="491" text-anchor="middle" dominant-baseline="central">Compile · Test · Deploy scripts</text>
+</g>
+
+<!-- LEGEND -->
+<text class="ts" x="40" y="543" fill="var(--text-muted)">Team:</text>
+<rect class="c-blue" x="82" y="536" width="10" height="10" rx="2" stroke-width="0"/>
+<text class="ts" x="97" y="543" fill="var(--text-secondary)">Frontend (Garv)</text>
+<rect class="c-teal" x="210" y="536" width="10" height="10" rx="2" stroke-width="0"/>
+<text class="ts" x="225" y="543" fill="var(--text-secondary)">Auth (Swati)</text>
+<rect class="c-purple" x="300" y="536" width="10" height="10" rx="2" stroke-width="0"/>
+<text class="ts" x="315" y="543" fill="var(--text-secondary)">Contracts (Anu)</text>
+<rect class="c-amber" x="420" y="536" width="10" height="10" rx="2" stroke-width="0"/>
+<text class="ts" x="435" y="543" fill="var(--text-secondary)">CI / Infra (Sira)</text>
+<rect class="c-gray" x="530" y="536" width="10" height="10" rx="2" stroke-width="0"/>
+<text class="ts" x="545" y="543" fill="var(--text-secondary)">Actors / Network</text>
+</svg>
+</div>
+
+<div id="p1" class="pnl">
+<p style="font-size:12px;color:var(--text-secondary);margin:0 0 14px">STRIDE analysis across all seven attack surfaces. Click any component name to drill down.</p>
+<div style="overflow-x:auto">
+<table class="tt">
+<thead>
+<tr>
+  <th>Component</th>
+  <th>Category</th>
+  <th>Threat</th>
+  <th>Severity</th>
+  <th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td class="comp" onclick="sendPrompt('Give me all security requirements for the BSVS React frontend')" style="cursor:pointer;text-decoration:underline dotted">Frontend</td>
+  <td><span class="sc bS">S — Spoofing</span></td>
+  <td>Attacker hosts a phishing site with identical UI to steal wallet signatures on a fraudulent contract address</td>
+  <td class="sv-h">High</td>
+  <td>Display deployed contract address prominently in UI; enforce HTTPS; prompt users to verify domain and contract address before signing any transaction</td>
+</tr>
+<tr>
+  <td class="comp">Frontend</td>
+  <td><span class="sc bT">T — Tampering</span></td>
+  <td>XSS injection modifies the <code>candidateId</code> in the DOM between user selection and MetaMask signature construction</td>
+  <td class="sv-h">High</td>
+  <td>Strict Content-Security-Policy header; no <code>innerHTML</code> with dynamic data; React's default escaping covers most XSS; audit all third-party packages in the build</td>
+</tr>
+<tr>
+  <td class="comp">Frontend</td>
+  <td><span class="sc bI">I — Info disclosure</span></td>
+  <td>Browser console logs or local storage inadvertently persist the voter's candidate selection before the transaction is mined</td>
+  <td class="sv-m">Medium</td>
+  <td>Never log vote-intent data; clear sensitive React state immediately after transaction broadcast; no persistence of pre-submission vote state</td>
+</tr>
+<tr>
+  <td class="comp">Frontend</td>
+  <td><span class="sc bE">E — Privilege escalation</span></td>
+  <td>Admin dashboard is gated only on a frontend role check — any wallet address can navigate to the admin route and attempt privileged actions</td>
+  <td class="sv-h">High</td>
+  <td>Frontend check is display-only; all admin contract functions must have <code>require(msg.sender == admin)</code> — the on-chain guard is the authoritative enforcement point</td>
+</tr>
+<tr>
+  <td class="comp" onclick="sendPrompt('Give me all security requirements for the BSVS auth module')" style="cursor:pointer;text-decoration:underline dotted">Auth module</td>
+  <td><span class="sc bS">S — Spoofing</span></td>
+  <td>Attacker submits fabricated or borrowed identity credentials to pass voter registration without being a legitimate voter</td>
+  <td class="sv-c">Critical</td>
+  <td>Cryptographic credential validation (HMAC or digital signature over student ID + wallet address); reject credentials not signed by the auth service's own key; bind credential to wallet address at issuance</td>
+</tr>
+<tr>
+  <td class="comp">Auth module</td>
+  <td><span class="sc bT">T — Tampering</span></td>
+  <td>MITM attacker intercepts credential submission and substitutes a different wallet address, registering their own address as a legitimate voter</td>
+  <td class="sv-h">High</td>
+  <td>Enforce HTTPS for all auth API calls; include the wallet address in the signed credential payload so substitution invalidates the signature</td>
+</tr>
+<tr>
+  <td class="comp">Auth module</td>
+  <td><span class="sc bI">I — Info disclosure</span></td>
+  <td>Voter PII (student IDs, allowlist) is exposed via a misconfigured auth service endpoint or storage bucket</td>
+  <td class="sv-h">High</td>
+  <td>Hash voter IDs before storage; encrypt the allowlist at rest; apply least-privilege access controls; do not log raw identity data in application logs</td>
+</tr>
+<tr>
+  <td class="comp">Auth module</td>
+  <td><span class="sc bD">D — Denial of service</span></td>
+  <td>Auth service crash or overload during the registration window blocks all new voter registrations</td>
+  <td class="sv-m">Medium</td>
+  <td>Health monitoring with alerting; decouple auth from voting — auth failure must not affect voters who are already registered on-chain</td>
+</tr>
+<tr>
+  <td class="comp" onclick="sendPrompt('Give me all security requirements for the BSVS VoterRegistry contract')" style="cursor:pointer;text-decoration:underline dotted">VoterRegistry</td>
+  <td><span class="sc bE">E — Privilege escalation</span></td>
+  <td>Any wallet address can call <code>registerVoter()</code> and add arbitrary addresses to the on-chain voter roll</td>
+  <td class="sv-c">Critical</td>
+  <td><code>require(msg.sender == admin, "Not admin")</code> on every privileged function; include a negative-case test that asserts a non-admin call reverts</td>
+</tr>
+<tr>
+  <td class="comp">VoterRegistry</td>
+  <td><span class="sc bS">S — Spoofing</span></td>
+  <td>Attacker attempts replay of a captured <code>registerVoter()</code> calldata to register an address a second time</td>
+  <td class="sv-m">Medium</td>
+  <td>On-chain <code>mapping(address => bool)</code> deduplication prevents double registration; EVM nonce mechanism prevents literal transaction replay; low residual risk if admin key is not shared</td>
+</tr>
+<tr>
+  <td class="comp" onclick="sendPrompt('Give me all security requirements for the BSVS Ballot.sol contract')" style="cursor:pointer;text-decoration:underline dotted">Ballot.sol</td>
+  <td><span class="sc bE">E — Privilege escalation</span></td>
+  <td>Voter calls <code>castVote()</code> multiple times, inflating a candidate's count because there is no double-vote guard</td>
+  <td class="sv-c">Critical</td>
+  <td><code>mapping(address => bool) public hasVoted</code>; <code>require(!hasVoted[msg.sender], "Already voted")</code>; set <code>hasVoted[msg.sender] = true</code> BEFORE any downstream logic (Checks-Effects-Interactions)</td>
+</tr>
+<tr>
+  <td class="comp">Ballot.sol</td>
+  <td><span class="sc bT">T — Tampering</span></td>
+  <td>Reentrancy attack exploits <code>castVote()</code> if it makes an external call before updating <code>hasVoted</code> state</td>
+  <td class="sv-h">High</td>
+  <td>Strictly follow Checks-Effects-Interactions; update all state before any external call; add OpenZeppelin <code>ReentrancyGuard</code> as an explicit second layer</td>
+</tr>
+<tr>
+  <td class="comp">Ballot.sol</td>
+  <td><span class="sc bI">I — Info disclosure</span></td>
+  <td><code>VoteCast</code> event emits both voter address and <code>candidateId</code>, permanently destroying ballot secrecy — anyone can reconstruct who voted for whom from the public event log</td>
+  <td class="sv-c">Critical</td>
+  <td>Emit <code>VoteCast(address voter)</code> only — no <code>candidateId</code> in the event. Store the candidate mapping in contract state, not in events. Document ballot secrecy as a known architectural limitation of this capstone scope</td>
+</tr>
+<tr>
+  <td class="comp">Ballot.sol</td>
+  <td><span class="sc bD">D — Denial of service</span></td>
+  <td>Unbounded candidate array causes <code>getResults()</code> to iterate past the block gas limit, reverting and making results permanently unretrievable</td>
+  <td class="sv-m">Medium</td>
+  <td>Enforce a maximum candidate count at election creation; use pull-over-push for results — return by index (<code>getResult(uint candidateId)</code>) not as a full array</td>
+</tr>
+<tr>
+  <td class="comp" onclick="sendPrompt('What are the admin key management requirements for BSVS and how should Sira structure key handling in CI/CD?')" style="cursor:pointer;text-decoration:underline dotted">Admin key</td>
+  <td><span class="sc bE">E — Privilege escalation</span></td>
+  <td>Admin private key is compromised, allowing an attacker to register unlimited fraudulent voters, close elections early, or lock the contract</td>
+  <td class="sv-c">Critical</td>
+  <td>Separate deployer key (one-time use) from election admin key; use a hardware wallet or multi-sig (Gnosis Safe) for the admin address; rotate after every election; never store in <code>.env</code> on shared machines</td>
+</tr>
+<tr>
+  <td class="comp">Admin key</td>
+  <td><span class="sc bR">R — Repudiation</span></td>
+  <td>Admin denies performing a fraudulent <code>registerVoter()</code> — without an off-chain audit trail, attribution relies solely on on-chain data which may be ambiguous in a shared-key scenario</td>
+  <td class="sv-m">Medium</td>
+  <td>All admin actions emit events with block timestamp; keep an off-chain audit log of each admin session including transaction hash; admin key must be single-person, not shared</td>
+</tr>
+<tr>
+  <td class="comp" onclick="sendPrompt('Explain the difference in security posture between Ganache and Sepolia for BSVS')" style="cursor:pointer;text-decoration:underline dotted">Blockchain</td>
+  <td><span class="sc bT">T — Tampering</span></td>
+  <td>51% attack on the Ganache local network or a small private testnet allows an attacker to rewrite vote transaction history</td>
+  <td class="sv-h">High (local)</td>
+  <td>Ganache is local dev only — never demo on Ganache as if it were production; use Sepolia (public PoS testnet) for demos; document that production requires a sufficiently decentralised network</td>
+</tr>
+<tr>
+  <td class="comp">Blockchain</td>
+  <td><span class="sc bI">I — Info disclosure</span></td>
+  <td>Pending <code>castVote()</code> transactions are visible in the public mempool before mining, revealing vote intent and enabling front-running</td>
+  <td class="sv-m">Medium</td>
+  <td>Accept as a known limitation of public EVM chains; document in the threat register; commit-reveal scheme is the full mitigation but is out of capstone scope</td>
+</tr>
+<tr>
+  <td class="comp" onclick="sendPrompt('What are the CI/CD security requirements for BSVS and what should Sira configure in GitHub Actions?')" style="cursor:pointer;text-decoration:underline dotted">CI/CD</td>
+  <td><span class="sc bI">I — Info disclosure</span></td>
+  <td>Deployer private key is stored in plaintext, echoed in CI logs, or accidentally committed to the repository</td>
+  <td class="sv-c">Critical</td>
+  <td>GitHub encrypted Secrets only; never <code>echo $PRIVATE_KEY</code> in workflow steps; add a secret-scanning pre-commit hook (<code>gitleaks</code>); rotate the deployer key after each deploy</td>
+</tr>
+<tr>
+  <td class="comp">CI/CD</td>
+  <td><span class="sc bT">T — Tampering</span></td>
+  <td>A compromised GitHub Actions workflow substitutes malicious contract bytecode during the deploy step — the wrong contract is deployed to the testnet</td>
+  <td class="sv-c">Critical</td>
+  <td>Pin all Action versions to commit SHA (not floating tags); verify deployed contract bytecode hash post-deploy against the compiled artifact; require PR review for any changes to workflow files</td>
+</tr>
+<tr>
+  <td class="comp">CI/CD</td>
+  <td><span class="sc bE">E — Privilege escalation</span></td>
+  <td>Unprotected main branch allows a direct push that triggers an unauthorised testnet deployment without code review</td>
+  <td class="sv-h">High</td>
+  <td>Branch protection on <code>main</code>: require PR + at least one approval, no force-push; add a manual approval gate environment in GitHub Actions before any deploy job executes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<script>
+function sw(i){
+  document.querySelectorAll('.pnl').forEach((p,j)=>p.classList.toggle('on',j===i));
+  document.querySelectorAll('.tb').forEach((b,j)=>b.classList.toggle('on',j===i));
+}
+</script>
